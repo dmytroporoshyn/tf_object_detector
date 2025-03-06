@@ -132,9 +132,12 @@ class ObjectDetectorHelper(
 
         CoroutineScope(Dispatchers.IO).launch {
             val image = feedInputTensorFrame(bytesList, imageHeight, imageWidth, 0)
-            val resized = Bitmap.createScaledBitmap(image, 640, 480, true)
+            val height = 480
+            val width = (imageWidth / imageHeight * height).toInt()
+            val resized = Bitmap.createScaledBitmap(image, width, height, true)
 
             val imageProcessor = ImageProcessor.Builder().add(Rot90Op(-imageRotation / 90)).build()
+
             val tensorImage = imageProcessor.process(TensorImage.fromBitmap(resized))
 
             val results = objectDetector!!.detect(tensorImage)
@@ -150,10 +153,11 @@ class ObjectDetectorHelper(
                     val score = detection.categories[0].score
 
                     val rect: MutableMap<String, Any> = HashMap()
-                    rect["top"] = top / 640 * imageHeight
-                    rect["right"] = right / 480  * imageWidth
-                    rect["bottom"] = bottom / 640 * imageHeight
-                    rect["left"] = left / 480 * imageWidth
+
+                    rect["top"] = top / height
+                    rect["right"] = right / width
+                    rect["bottom"] = bottom / height
+                    rect["left"] = left / width
 
                     val map: MutableMap<String, Any> = HashMap()
                     map["rect"] = rect
