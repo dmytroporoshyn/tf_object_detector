@@ -28,7 +28,6 @@ class TfObjectDetectorPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    Log.i("DETECTOR", call.method)
     when (call.method) {
       "init" -> {
         init(call, result)
@@ -83,7 +82,6 @@ class TfObjectDetectorPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       val numThreads = call.argument<Int>("numThreads") ?: 2
       val maxResults = call.argument<Int>("maxResults") ?: 3
       val delegate = call.argument<Int>("delegate") ?: 0
-      Log.i("DETECTOR", model ?: "EMPTY")
       objectDetectorHelper?.setupObjectDetector(
         model = model!!,
         threshold = threshold.toFloat(),
@@ -112,7 +110,6 @@ class TfObjectDetectorPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         result
       )
     } catch (e: Exception) {
-      Log.i("DETECTOR", e.stackTraceToString())
       result.error("Could not detect", e.message, null)
     }
   }
